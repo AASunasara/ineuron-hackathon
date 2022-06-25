@@ -45,3 +45,12 @@ JOIN HumanResources.Employee
 ON HumanResources.Employee.OrganizationLevel = d1.OrganizationLevel
 JOIN Person.Person
 ON Person.Person.BusinessEntityID = HumanResources.Employee.BusinessEntityID;
+
+9
+SELECT PCR.Name FROM Person.CountryRegion PCR LEFT JOIN Sales.countryregioncurrency SCC ON PCR.CountryRegionCode = SCC.CountryRegionCode LEFT JOIN Sales.Currency SC on SC.CurrencyCode = SCC.CurrencyCode LEFT JOIN Sales.CurrencyRate SR ON SR.FromCurrencyCode = SC.CurrencyCode ORDER BY (SR.EndOfDayRate) DESC
+
+10
+SELECT * FROM Production.Product pp LEFT JOIN Sales.SalesOrderDetail ssod ON ssod.ProductID = pp.ProductId
+LEFT JOIN Sales.SalesOrderHeader soh ON ssod.SalesOrderDetailID = soh.SalesOrderID
+INNER JOIN Sales.creditcard  Scc ON Scc.CreditCardID = soh.CreditCardID
+WHERE YEAR(soh.OrderDate) = Scc.ExpYear AND MONTH(soh.OrderDate) = ExpMonth
