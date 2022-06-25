@@ -1,0 +1,47 @@
+1
+SELECT DATEPART(month, HireDate) as HiringMonth, COUNT(*) as TotalHired FROM HumanResources.Employee GROUP BY DATEPART(month,HireDate);
+SELECT DATENAME(MONTH, DATEADD(MONTH, 1, HireDate)) as HiringMonth, COUNT(*) as TotalHired FROM HumanResources.Employee GROUP BY DATENAME(MONTH, DATEADD(MONTH, 1, HireDate));
+
+2
+SELECT HumanResources.Department.Name, count(*) as TotalHired, DATEPART(year,HireDate) as HiringYear
+    From HumanResources.Employee
+    JOIN HumanResources.EmployeeDepartmentHistory
+    ON Employee.BusinessEntityID = EmployeeDepartmentHistory.BusinessEntityID
+    JOIN HumanResources.Department
+    ON EmployeeDepartmentHistory.DepartmentID = Department.DepartmentID
+    GROUP BY Department.Name, DATEPART( year, HireDate);
+
+3
+SELECT Person.* , Person.CountryRegion.Name as CountryRegionName
+FROM Person.Person
+JOIN Person.BusinessEntity
+ON Person.Person.BusinessEntityID = Person.BusinessEntity.BusinessEntityID
+JOIN Person.BusinessEntityAddress
+ON Person.BusinessEntityAddress.BusinessEntityID = Person.BusinessEntity.BusinessEntityID
+JOIN Person.Address
+ON Person.Address.AddressID = Person.BusinessEntityAddress.AddressID
+JOIN Person.StateProvince
+ON Person.StateProvince.StateProvinceID = Person.Address.StateProvinceID
+JOIN Person.CountryRegion
+ON Person.CountryRegion.CountryRegionCode = Person.StateProvince.CountryRegionCode
+WHERE Person.Person.FirstName LIKE 'S%' AND Person.Person.PersonType != 'EM'  ;
+
+4
+SELECT CONCAT(Person.Person.FirstName, ' ', Person.Person.LASTNAME) as Name, Person.Person.Title as JobTitle,
+COUNT(*)
+FROM Person.Person
+JOIN HumanResources.Employee
+ON HumanResources.Employee.BusinessEntityID = Person.Person.BusinessEntityID
+GROUP BY HumanResources.Employee.OrganizationLevel, Person.Person.FirstName, Person.Person.LastName;
+;
+
+5
+SELECT CONCAT(Person.Person.FirstName, ' ', Person.Person.LastName) as Name, HumanResources.Employee.JobTitle, d1.* from
+(SELECT HumanResources.Employee.OrganizationLevel, COUNT(HumanResources.Employee.OrganizationLevel) as NumberOfEmployeeReporting
+FROM HumanResources.Employee
+where HumanResources.Employee.OrganizationLevel is NOT NULL
+GROUP BY HumanResources.Employee.OrganizationLevel) as d1
+JOIN HumanResources.Employee
+ON HumanResources.Employee.OrganizationLevel = d1.OrganizationLevel
+JOIN Person.Person
+ON Person.Person.BusinessEntityID = HumanResources.Employee.BusinessEntityID;
